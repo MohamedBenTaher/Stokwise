@@ -18,8 +18,11 @@ RUN npm ci
 # Bundle app source
 COPY --chown=node:node . .
 
-# Use the node user from the image (instead of the root user)
+RUN npm run build
+
 USER node
+
+CMD [ "npm", "run", "start:dev" ]
 
 ###################
 # BUILD FOR PRODUCTION
@@ -53,9 +56,7 @@ USER node
 
 FROM node:18-alpine As production
 
-# Copy the bundled code from the build stage to the production image
+WORKDIR /usr/src/app
 COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
 COPY --chown=node:node --from=build /usr/src/app/dist ./dist
-
-# Start the server using the production build
 CMD [ "node", "dist/main.js" ]
