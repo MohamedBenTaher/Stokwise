@@ -1,6 +1,13 @@
 version: '3.8'
 
 services:
+  maildev:
+    build:
+      context: ./backend/
+      dockerfile: mailDev.Dockerfile
+    ports:
+      - ${MAIL_CLIENT_PORT}:1080
+      - ${MAIL_PORT}:1025
   backend:
     container_name: stockwise-backend
     build: 
