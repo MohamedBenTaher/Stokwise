@@ -16,6 +16,7 @@ import { HeaderResolver, I18nModule } from 'nestjs-i18n';
 import { AllConfigType } from './config/config.type';
 import { AuthModule } from './auth/auth.module';
 import { StatusModule } from './status/status.module';
+import { FilesModule } from './files/files.module';
 
 config({ path: resolve(__dirname, '.env') });
 
@@ -56,6 +57,7 @@ config({ path: resolve(__dirname, '.env') });
     MailModule,
     AuthModule,
     StatusModule,
+    FilesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
