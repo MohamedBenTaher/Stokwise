@@ -17,6 +17,7 @@ RUN npm ci
 
 # Bundle app source
 COPY --chown=node:node . .
+COPY ./src/i18n ./dist/i18n
 
 RUN npm run build
 
@@ -59,4 +60,5 @@ FROM node:18-alpine As production
 WORKDIR /usr/src/app
 COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
 COPY --chown=node:node --from=build /usr/src/app/dist ./dist
+COPY ./src/i18n ./dist/i18n
 CMD [ "node", "dist/main.js" ]

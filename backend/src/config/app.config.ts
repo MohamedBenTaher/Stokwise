@@ -18,7 +18,7 @@ enum Environment {
 }
 
 class EnvironmentVariablesValidator {
-  @IsEnum(Environment)
+  // @IsEnum(Environment)
   @IsOptional()
   NODE_ENV: Environment;
 
@@ -51,12 +51,14 @@ class EnvironmentVariablesValidator {
 
 export default registerAs<AppConfig>('app', () => {
   validateConfig(process.env, EnvironmentVariablesValidator);
-
+  const port = process.env.BACKEND_PORT;
+  console.log('port', port);
   return {
     nodeEnv: process.env.NODE_ENV || 'development',
     name: process.env.APP_NAME || 'app',
     workingDirectory: process.env.PWD || process.cwd(),
     frontendDomain: process.env.FRONTEND_DOMAIN,
+    fallbackLanguage: process.env.APP_FALLBACK_LANGUAGE || 'en',
     backendDomain: process.env.BACKEND_DOMAIN ?? 'http://localhost',
     port: process.env.APP_PORT
       ? parseInt(process.env.APP_PORT, 10)
@@ -64,7 +66,6 @@ export default registerAs<AppConfig>('app', () => {
         ? parseInt(process.env.PORT, 10)
         : 3000,
     apiPrefix: process.env.API_PREFIX || 'api',
-    fallbackLanguage: process.env.APP_FALLBACK_LANGUAGE || 'en',
     headerLanguage: process.env.APP_HEADER_LANGUAGE || 'x-custom-lang',
   };
 });

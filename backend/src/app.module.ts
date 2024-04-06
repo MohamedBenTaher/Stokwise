@@ -9,22 +9,26 @@ import { TypeOrmConfigService } from 'src/database/typorm-config.service';
 import databseConfig from 'src/database/config/databse.config';
 
 import { config } from 'dotenv';
-import path, { resolve } from 'path';
+import { resolve } from 'path';
 import { MailerModule } from './mailer/mailer.module';
 import { MailModule } from './mail/mail.module';
 import { HeaderResolver, I18nModule } from 'nestjs-i18n';
 import { AllConfigType } from './config/config.type';
 import { AuthModule } from './auth/auth.module';
-import { StatusModule } from './status/status.module';
+// import { StatusModule } from './status/status.module';
 import { FilesModule } from './files/files.module';
-
+import appConfig from './config/app.config';
+import mailConfig from './mail/config/mail.config';
+import fileConfig from './files/config/file.config';
+import path from 'path';
 config({ path: resolve(__dirname, '.env') });
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [databseConfig],
+      load: [databseConfig, appConfig, mailConfig, fileConfig],
+      envFilePath: ['.env'],
     }),
     UsersModule,
     TypeOrmModule.forRootAsync({
@@ -35,7 +39,10 @@ config({ path: resolve(__dirname, '.env') });
         fallbackLanguage: configService.getOrThrow('app.fallbackLanguage', {
           infer: true,
         }),
-        loaderOptions: { path: path.join(__dirname, '/i18n/'), watch: true },
+        loaderOptions: {
+          path: resolve(__dirname, './i18n/'),
+          watch: true,
+        },
       }),
       resolvers: [
         {
@@ -56,7 +63,6 @@ config({ path: resolve(__dirname, '.env') });
     MailerModule,
     MailModule,
     AuthModule,
-    StatusModule,
     FilesModule,
   ],
   controllers: [AppController],
