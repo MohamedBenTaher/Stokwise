@@ -31,6 +31,20 @@ class EnvironmentVariablesValidator {
 
 export default registerAs<AuthConfig>('auth', () => {
   validateConfig(process.env, EnvironmentVariablesValidator);
+  console.log('process.env.AUTH_JWT_SECRET', process.env.AUTH_JWT_SECRET);
+  console.log(
+    'process.env.AUTH_JWT_TOKEN_EXPIRES_IN',
+    process.env.AUTH_JWT_TOKEN_EXPIRES_IN,
+  );
+  console.log(
+    'process.env.AUTH_REFRESH_SECRET',
+    process.env.AUTH_REFRESH_SECRET,
+  );
+  console.log(
+    'process.env.AUTH_REFRESH_TOKEN_EXPIRES_IN',
+    process.env.AUTH_REFRESH_TOKEN_EXPIRES_IN,
+  );
+  console.log('process.env.AUTH_FORGOT_SECRET', process.env.AUTH_FORGOT_SECRET);
 
   return {
     secret: process.env.AUTH_JWT_SECRET,

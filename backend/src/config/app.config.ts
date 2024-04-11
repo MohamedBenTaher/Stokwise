@@ -44,6 +44,21 @@ export default registerAs<AppConfig>('app', () => {
   validateConfig(process.env, EnvironmentVariablesValidator);
   const port = process.env.BACKEND_PORT;
   console.log('port', port);
+  validateConfig(process.env, EnvironmentVariablesValidator);
+  console.log('process.env.AUTH_JWT_SECRET', process.env.AUTH_JWT_SECRET);
+  console.log(
+    'process.env.AUTH_JWT_TOKEN_EXPIRES_IN',
+    process.env.AUTH_JWT_TOKEN_EXPIRES_IN,
+  );
+  console.log(
+    'process.env.AUTH_REFRESH_SECRET',
+    process.env.AUTH_REFRESH_SECRET,
+  );
+  console.log(
+    'process.env.AUTH_REFRESH_TOKEN_EXPIRES_IN',
+    process.env.AUTH_REFRESH_TOKEN_EXPIRES_IN,
+  );
+  console.log('process.env.AUTH_FORGOT_SECRET', process.env.AUTH_FORGOT_SECRET);
   return {
     nodeEnv: process.env.NODE_ENV || 'development',
     name: process.env.APP_NAME || 'app',

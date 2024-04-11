@@ -12,7 +12,7 @@ import {
 
 import { Exclude, Expose } from 'class-transformer';
 import { RoleEntity } from 'src/roles/entities/role.entity';
-import { StatusEntity } from 'src/status/entities/status';
+import { StatusEntity } from 'src/status/entities/status.entity';
 import { User } from '../domain/user';
 import { AuthProvidersEnum } from 'src/auth/auth-providers.enum';
 import { EntityRelationalHelper } from 'src/utils/types/entity-helper';

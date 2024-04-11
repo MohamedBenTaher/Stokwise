@@ -27,6 +27,7 @@ export class UsersService {
   async create(createProfileDto: CreateUserDto): Promise<User> {
     const clonedPayload = {
       provider: AuthProvidersEnum.email,
+      refreshToken: null,
       ...createProfileDto,
     };
 

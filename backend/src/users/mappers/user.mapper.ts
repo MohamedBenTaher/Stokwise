@@ -1,4 +1,4 @@
-import { StatusEntity } from 'src/status/entities/status';
+import { StatusEntity } from 'src/status/entities/status.entity';
 import { User } from '../domain/user';
 import { UserEntity } from '../entities/user.entity';
 import { RoleEntity } from 'src/roles/entities/role.entity';
@@ -49,7 +49,7 @@ export class UserMapper {
 
     if (user.status) {
       status = new StatusEntity();
-      status.id = user.status.id;
+      status.id = Number(user.status.id);
     }
 
     const userEntity = new UserEntity();

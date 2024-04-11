@@ -20,6 +20,7 @@ import { FilesModule } from './files/files.module';
 import appConfig from './config/app.config';
 import mailConfig from './mail/config/mail.config';
 import fileConfig from './files/config/file.config';
+import authConfig from './auth/config/auth.config';
 
 config({ path: resolve(__dirname, '.env') });
 
@@ -27,7 +28,7 @@ config({ path: resolve(__dirname, '.env') });
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [databseConfig, appConfig, mailConfig, fileConfig],
+      load: [databseConfig, appConfig, mailConfig, fileConfig, authConfig],
       envFilePath: ['.env'],
     }),
     UsersModule,
