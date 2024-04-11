@@ -1,4 +1,4 @@
-import { EntityCondition } from 'src/utils/types/entity-condiion.type';
+import { EntityCondition } from 'src/utils/types/entity-condition.type';
 import { NullableType } from 'src/utils/types/nullable.type';
 import { FileType } from '../domain/file';
 

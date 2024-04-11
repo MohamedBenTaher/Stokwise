@@ -20,7 +20,7 @@ import { FilesModule } from './files/files.module';
 import appConfig from './config/app.config';
 import mailConfig from './mail/config/mail.config';
 import fileConfig from './files/config/file.config';
-import path from 'path';
+
 config({ path: resolve(__dirname, '.env') });
 
 @Module({

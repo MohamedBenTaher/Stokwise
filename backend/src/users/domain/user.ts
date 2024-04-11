@@ -1,5 +1,5 @@
 import { Exclude, Expose } from 'class-transformer';
-// import { FileType } from '../../files/domain/file';
+import { FileType } from '../../files/domain/file';
 import { Role } from '../../roles/domain/role';
 import { Status } from '../../status/domain/status';
 
@@ -22,7 +22,7 @@ export class User {
   socialId?: string | null;
   firstName: string | null;
   lastName: string | null;
-  //   photo?: FileType | null;
+  photo?: FileType | null;
   role?: Role | null;
   status?: Status;
   createdAt: Date;

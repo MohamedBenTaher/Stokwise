@@ -1,4 +1,50 @@
-import { PartialType } from '@nestjs/mapped-types';
+import { PartialType, ApiPropertyOptional } from '@nestjs/swagger';
 import { CreateUserDto } from './create-user.dto';
 
-export class UpdateUserDto extends PartialType(CreateUserDto) {}
+import { Transform, Type } from 'class-transformer';
+import { IsEmail, IsOptional, MinLength } from 'class-validator';
+import { FileDto } from '../../files/dto/file.dto';
+import { RoleDto } from '../../roles/dto/role.dto';
+import { lowerCaseTransformer } from '../../utils/transformers/lower-case.transformer';
+import { StatusDto } from 'src/status/dto/status.dto';
+
+export class UpdateUserDto extends PartialType(CreateUserDto) {
+  @ApiPropertyOptional({ example: 'test1@example.com' })
+  @Transform(lowerCaseTransformer)
+  @IsOptional()
+  @IsEmail()
+  email?: string | null;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @MinLength(6)
+  password?: string;
+
+  provider?: string;
+
+  socialId?: string | null;
+
+  @ApiPropertyOptional({ example: 'John' })
+  @IsOptional()
+  firstName?: string | null;
+
+  @ApiPropertyOptional({ example: 'Doe' })
+  @IsOptional()
+  lastName?: string | null;
+
+  @ApiPropertyOptional({ type: FileDto })
+  @IsOptional()
+  photo?: FileDto | null;
+
+  @ApiPropertyOptional({ type: RoleDto })
+  @IsOptional()
+  @Type(() => RoleDto)
+  role?: RoleDto | null;
+
+  @ApiPropertyOptional({ type: StatusDto })
+  @IsOptional()
+  @Type(() => StatusDto)
+  status?: StatusDto;
+
+  hash?: string | null;
+}

@@ -6,7 +6,7 @@ import { FileMapper } from '../mappers/file.mapper';
 import { NullableType } from 'src/utils/types/nullable.type';
 import { FileRepository } from '../file.repository';
 import { FileType } from 'src/files/domain/file';
-import { EntityCondition } from 'src/utils/types/entity-condiion.type';
+import { EntityCondition } from 'src/utils/types/entity-condition.type';
 
 @Injectable()
 export class FileRelationalRepository implements FileRepository {
