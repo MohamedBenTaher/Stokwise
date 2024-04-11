@@ -10,9 +10,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-// We use class-transformer in ORM entity and domain entity.
-// We duplicate these rules because you can choose not to use adapters
-// in your project and return an ORM entity directly in response.
 import { Exclude, Expose } from 'class-transformer';
 import { RoleEntity } from 'src/roles/entities/role.entity';
 import { StatusEntity } from 'src/status/entities/status';
@@ -28,8 +25,6 @@ export class UserEntity extends EntityRelationalHelper implements User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  // For "string | null" we need to use String type.
-  // More info: https://github.com/typeorm/typeorm/issues/2567
   @Column({ type: String, unique: true, nullable: true })
   @Expose({ groups: ['me', 'admin'] })
   email: string | null;
@@ -49,6 +44,9 @@ export class UserEntity extends EntityRelationalHelper implements User {
   @Column({ default: AuthProvidersEnum.email })
   @Expose({ groups: ['me', 'admin'] })
   provider: string;
+
+  @Column({ nullable: true })
+  refreshToken: string;
 
   @Index()
   @Column({ type: String, nullable: true })

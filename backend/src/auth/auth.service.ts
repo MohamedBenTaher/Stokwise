@@ -6,8 +6,6 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import ms from 'ms';
-import crypto from 'crypto';
-import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 import { JwtService } from '@nestjs/jwt';
 import bcrypt from 'bcryptjs';
 import { AuthEmailLoginDto } from './dto/auth-email-login.dto';
@@ -15,9 +13,7 @@ import { AuthUpdateDto } from './dto/auth-update.dto';
 import { AuthProvidersEnum } from './auth-providers.enum';
 import { AuthRegisterLoginDto } from './dto/auth-register-login.dto';
 import { NullableType } from '../utils/types/nullable.type';
-import { LoginResponseType } from './types/login-response.type';
 import { ConfigService } from '@nestjs/config';
-import { JwtRefreshPayloadType } from './strategies/types/jwt-refresh-paylaod.type';
 import { JwtPayloadType } from './strategies/types/jwt-payload.type';
 import { UsersService } from '../users/users.service';
 import { AllConfigType } from '../config/config.type';
@@ -241,7 +237,7 @@ export class AuthService {
       });
     }
 
-    const user = this.usersService.findOne({
+    const user = await this.usersService.findOne({
       id: userId,
     });
 
@@ -260,7 +256,7 @@ export class AuthService {
   }
 
   async forgotPassword(email: string): Promise<void> {
-    const user = this.usersService.findOne({
+    const user = await this.usersService.findOne({
       email,
     });
 
@@ -300,7 +296,12 @@ export class AuthService {
     });
   }
 
-  async resetPassword(hash: string, password: string): Promise<void> {
+  async resetPassword(
+    hash: string,
+    password: string,
+  ): Promise<{
+    tokens: { token: string; refreshToken: string; tokenExpires: number };
+  }> {
     let userId: User['id'];
 
     try {
@@ -322,7 +323,7 @@ export class AuthService {
       });
     }
 
-    const user = this.usersService.findOne({
+    const user = await this.usersService.findOne({
       id: userId,
     });
 
@@ -337,13 +338,20 @@ export class AuthService {
 
     user.password = password;
 
-    await this.sessionService.softDelete({
-      user: {
-        id: user.id,
-      },
+    await this.usersService.update(user.id, user);
+
+    const { token, refreshToken, tokenExpires } = await this.getTokensData({
+      id: user.id,
+      role: user.role,
     });
 
-    this.usersService.update(user.id, user);
+    return {
+      tokens: {
+        token,
+        refreshToken,
+        tokenExpires,
+      },
+    };
   }
 
   async me(userJwtPayload: JwtPayloadType): Promise<NullableType<User>> {
@@ -366,7 +374,7 @@ export class AuthService {
         });
       }
 
-      const currentUser = this.usersService.findOne({
+      const currentUser = await this.usersService.findOne({
         id: userJwtPayload.id,
       });
 
@@ -400,68 +408,45 @@ export class AuthService {
             oldPassword: 'incorrectOldPassword',
           },
         });
-      } else {
-        await this.sessionService.softDelete({
-          user: {
-            id: currentUser.id,
-          },
-          excludeId: userJwtPayload.sessionId,
-        });
       }
     }
 
-    this.usersService.update(userJwtPayload.id, userDto);
+    await this.usersService.update(userJwtPayload.id, userDto);
 
     return this.usersService.findOne({
       id: userJwtPayload.id,
     });
   }
 
-  async refreshToken(
-    data: Pick<JwtRefreshPayloadType, 'sessionId' | 'hash'>,
-  ): Promise<Omit<LoginResponseType, 'user'>> {
-    const session = await this.sessionService.findOne({
-      id: data.sessionId,
+  async refreshToken(refreshToken: string): Promise<{
+    tokens: { token: string; refreshToken: string; tokenExpires: number };
+  }> {
+    const user = await this.usersService.findOne({
+      refreshToken: refreshToken,
     });
 
-    if (!session) {
+    if (!user) {
       throw new UnauthorizedException();
     }
 
-    if (session.hash !== data.hash) {
-      throw new UnauthorizedException();
-    }
-
-    const hash = crypto
-      .createHash('sha256')
-      .update(randomStringGenerator())
-      .digest('hex');
-
-    const user = this.usersService.findOne({
-      id: session.user.id,
+    const {
+      token,
+      refreshToken: newRefreshToken,
+      tokenExpires,
+    } = await this.getTokensData({
+      id: user.id,
+      role: user.role,
     });
 
-    if (!user?.role) {
-      throw new UnauthorizedException();
-    }
-
-    await this.sessionService.update(session.id, {
-      hash,
-    });
-
-    const { token, refreshToken, tokenExpires } = await this.getTokensData({
-      id: session.user.id,
-      role: {
-        id: user.role.id,
-      },
-      sessionId: session.id,
-      hash,
-    });
+    user.refreshToken = newRefreshToken;
+    await this.usersService.update(user.id, user);
 
     return {
-      token,
-      refreshToken,
-      tokenExpires,
+      tokens: {
+        token,
+        refreshToken: newRefreshToken,
+        tokenExpires,
+      },
     };
   }
 
@@ -469,10 +454,16 @@ export class AuthService {
     await this.usersService.softDelete(user.id);
   }
 
-  async logout(data: Pick<JwtRefreshPayloadType, 'sessionId'>) {
-    return this.sessionService.softDelete({
-      id: data.sessionId,
+  async logout(refreshToken: string): Promise<void> {
+    const user = await this.usersService.findOne({
+      refreshToken: refreshToken,
     });
+
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+    user.refreshToken = null;
+    await this.usersService.update(user.id, user);
   }
 
   private async getTokensData(data: { id: User['id']; role: User['role'] }) {
@@ -483,21 +474,19 @@ export class AuthService {
     const tokenExpires = Date.now() + ms(tokenExpiresIn);
 
     const [token, refreshToken] = await Promise.all([
-      await this.jwtService.signAsync(
+      this.jwtService.signAsync(
         {
           id: data.id,
           role: data.role,
-          sessionId: data.sessionId,
         },
         {
           secret: this.configService.getOrThrow('auth.secret', { infer: true }),
           expiresIn: tokenExpiresIn,
         },
       ),
-      await this.jwtService.signAsync(
+      this.jwtService.signAsync(
         {
-          sessionId: data.sessionId,
-          hash: data.hash,
+          id: data.id,
         },
         {
           secret: this.configService.getOrThrow('auth.refreshSecret', {

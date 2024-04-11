@@ -10,6 +10,7 @@ import {
   Patch,
   Delete,
   SerializeOptions,
+  Req,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -24,7 +25,7 @@ import { LoginResponseType } from './types/login-response.type';
 import { NullableType } from '../utils/types/nullable.type';
 import { User } from '../users/domain/user';
 import { Res } from '@nestjs/common';
-import { Response } from 'express';
+import { Response, Request as ReqExpress } from 'express';
 @ApiTags('Auth')
 @Controller({
   path: 'auth',
@@ -79,8 +80,10 @@ export class AuthController {
 
   @Post('reset/password')
   @HttpCode(HttpStatus.NO_CONTENT)
-  resetPassword(@Body() resetPasswordDto: AuthResetPasswordDto): Promise<void> {
-    return this.service.resetPassword(
+  async resetPassword(
+    @Body() resetPasswordDto: AuthResetPasswordDto,
+  ): Promise<void> {
+    await this.service.resetPassword(
       resetPasswordDto.hash,
       resetPasswordDto.password,
     );
@@ -106,12 +109,9 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   public async refresh(
     @Request() req,
-    @Res() res: Response,
+    @Res({ passthrough: true }) res: Response,
   ): Promise<Omit<LoginResponseType, 'user'>> {
-    const { user, tokens } = await this.service.refreshToken({
-      sessionId: req.user.sessionId,
-      hash: req.user.hash,
-    });
+    const { tokens } = await this.service.refreshToken(req.user);
 
     res.cookie('token', tokens.token, {
       httpOnly: true,
@@ -119,17 +119,22 @@ export class AuthController {
     });
     res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true });
 
-    return res.send(user);
+    return tokens;
   }
 
   @ApiBearerAuth()
   @Post('logout')
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.NO_CONTENT)
-  public async logout(@Request() request): Promise<void> {
-    await this.service.logout({
-      sessionId: request.user.sessionId,
-    });
+  public async logout(
+    @Req() req: ReqExpress,
+    @Res() res: Response,
+  ): Promise<void> {
+    const refreshToken = req.cookies['refreshToken'];
+    await this.service.logout(refreshToken);
+
+    res.clearCookie('token');
+    res.clearCookie('refreshToken');
   }
 
   @ApiBearerAuth()

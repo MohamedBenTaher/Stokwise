@@ -13,6 +13,9 @@ export class User {
   password?: string;
 
   @Exclude({ toPlainOnly: true })
+  refreshToken: string | null;
+
+  @Exclude({ toPlainOnly: true })
   previousPassword?: string;
 
   @Expose({ groups: ['me', 'admin'] })
