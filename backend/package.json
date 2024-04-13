@@ -19,11 +19,11 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "env-cmd ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
-    "migration:generate": "npm run typeorm -- --dataSource=src/database/data-source.ts migration:generate",
+    "migration:generate": "npm run typeorm -- --dataSource=src/database/datasource.ts migration:generate",
     "migration:create": "npm run typeorm -- migration:create",
-    "migration:run": "npm run typeorm -- --dataSource=src/database/data-source.ts migration:run",
-    "migration:revert": "npm run typeorm -- --dataSource=src/database/data-source.ts migration:revert",
-    "schema:drop": "npm run typeorm -- --dataSource=src/database/data-source.ts schema:drop"
+    "migration:run": "npm run typeorm -- --dataSource=src/database/datasource.ts migration:run",
+    "migration:revert": "npm run typeorm -- --dataSource=src/database/datasource.ts migration:revert",
+    "schema:drop": "npm run typeorm -- --dataSource=src/database/datasource.ts schema:drop"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "3.540.0",
@@ -70,6 +70,7 @@
     "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",
+    "@types/bcryptjs": "^2.4.6",
     "@types/express": "^4.17.17",
     "@types/jest": "^29.5.2",
     "@types/multer": "^1.4.11",
@@ -78,6 +79,7 @@
     "@types/supertest": "^6.0.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
+    "env-cmd": "^10.1.0",
     "eslint": "^8.42.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",

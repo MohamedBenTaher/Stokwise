@@ -13,6 +13,7 @@ services:
     build: 
       context: ./backend
       dockerfile: Dockerfile
+      target: development
     ports:
       - ${BACKEND_PORT}:${BACKEND_PORT}
     volumes:
