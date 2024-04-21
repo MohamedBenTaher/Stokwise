@@ -24,9 +24,9 @@ export class MailService {
     if (i18n) {
       [emailConfirmTitle, text1, text2, text3] = await Promise.all([
         i18n.t('common.confirmEmail'),
-        i18n.t('confirm-email.text1'),
-        i18n.t('confirm-email.text2'),
-        i18n.t('confirm-email.text3'),
+        i18n.t('confirm-mail.text1'),
+        i18n.t('confirm-mail.text2'),
+        i18n.t('confirm-mail.text3'),
       ]);
     }
 

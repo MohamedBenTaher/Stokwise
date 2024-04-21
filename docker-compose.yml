@@ -2,12 +2,18 @@ version: '3.8'
 
 services:
   maildev:
+    container_name: stockwise-maildev
     build:
       context: ./backend/
       dockerfile: mailDev.Dockerfile
+    env_file:
+      - ./backend/.env
     ports:
       - ${MAIL_CLIENT_PORT}:1080
       - ${MAIL_PORT}:1025
+    networks:
+      - stockwise-network
+
   backend:
     container_name: stockwise-backend
     build: 
@@ -20,6 +26,7 @@ services:
       - ./backend:/usr/src/app
     depends_on:
       - db
+      - maildev  
     env_file:
       - ./backend/.env
     networks:
