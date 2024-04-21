@@ -48,7 +48,7 @@ export class MailService {
         'src',
         'mail',
         'mail-templates',
-        'activation.hbs',
+        'activate.hbs',
       ),
       context: {
         title: emailConfirmTitle,

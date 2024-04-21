@@ -23,7 +23,8 @@
     "migration:create": "npm run typeorm -- migration:create",
     "migration:run": "npm run typeorm -- --dataSource=src/database/datasource.ts migration:run",
     "migration:revert": "npm run typeorm -- --dataSource=src/database/datasource.ts migration:revert",
-    "schema:drop": "npm run typeorm -- --dataSource=src/database/datasource.ts schema:drop"
+    "schema:drop": "npm run typeorm -- --dataSource=src/database/datasource.ts schema:drop",
+    "seed:run": "ts-node -r tsconfig-paths/register ./src/database/seeds/run-seed.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "3.540.0",
