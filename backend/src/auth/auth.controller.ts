@@ -13,7 +13,7 @@ import {
   Req,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiCookieAuth, ApiTags } from '@nestjs/swagger';
 import { AuthEmailLoginDto } from './dto/auth-email-login.dto';
 import { AuthForgotPasswordDto } from './dto/auth-forgot-password.dto';
 import { AuthConfirmEmailDto } from './dto/auth-confirm-email.dto';
@@ -89,7 +89,7 @@ export class AuthController {
     );
   }
 
-  @ApiBearerAuth()
+  @ApiCookieAuth()
   @SerializeOptions({
     groups: ['me'],
   })
@@ -100,7 +100,7 @@ export class AuthController {
     return this.service.me(request.user);
   }
 
-  @ApiBearerAuth()
+  @ApiCookieAuth()
   @SerializeOptions({
     groups: ['me'],
   })
@@ -122,7 +122,7 @@ export class AuthController {
     return tokens;
   }
 
-  @ApiBearerAuth()
+  @ApiCookieAuth()
   @Post('logout')
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -137,7 +137,7 @@ export class AuthController {
     res.clearCookie('refreshToken');
   }
 
-  @ApiBearerAuth()
+  @ApiCookieAuth()
   @SerializeOptions({
     groups: ['me'],
   })
@@ -151,7 +151,7 @@ export class AuthController {
     return this.service.update(request.user, userDto);
   }
 
-  @ApiBearerAuth()
+  @ApiCookieAuth()
   @Delete('me')
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.NO_CONTENT)

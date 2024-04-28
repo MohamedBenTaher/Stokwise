@@ -13,7 +13,7 @@ async function bootstrap() {
     .setTitle('Stockwise API')
     .setDescription('The Stockwise API description')
     .setVersion('1.0')
-    .addBearerAuth()
+    .addCookieAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, options);

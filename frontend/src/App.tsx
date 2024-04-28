@@ -1,16 +1,13 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-const queryClient = new QueryClient();
+
+import React from 'react';
+import { ThemeProvider } from "@/components/theme/ThemeProvider"
+import { ModeToggle } from './components/ui/mode-toggle';
+
 function App() {
 
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <div>hello world</div>
-    </QueryClientProvider>
+<></>
   );
 }
 

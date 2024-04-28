@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiCookieAuth, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../roles/roles.decorator';
 import { RoleEnum } from '../roles/roles.enum';
 import { AuthGuard } from '@nestjs/passport';
@@ -31,7 +31,7 @@ import { infinityPagination } from '../utils/infinity-pagination';
   path: 'users',
   version: '1',
 })
-@ApiBearerAuth()
+@ApiCookieAuth()
 @Roles(RoleEnum.admin)
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 export class UsersController {
