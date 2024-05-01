@@ -1,4 +1,9 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -19,6 +24,7 @@ import { HeaderResolver, I18nModule } from 'nestjs-i18n';
 import { AllConfigType } from './config/config.type';
 import { AuthModule } from './auth/auth.module';
 import { FilesModule } from './files/files.module';
+import { AuthMiddleware } from './auth/middleware/middleware';
 
 config({ path: resolve(__dirname, '.env') });
 
@@ -67,4 +73,17 @@ config({ path: resolve(__dirname, '.env') });
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AuthMiddleware)
+      .exclude(
+        { path: 'auth/email/login', method: RequestMethod.POST },
+        { path: 'auth/email/register', method: RequestMethod.POST },
+        { path: 'auth/email/confirm', method: RequestMethod.POST },
+        { path: 'auth/forgot/password', method: RequestMethod.POST },
+        { path: 'auth/reset/password', method: RequestMethod.POST },
+      )
+      .forRoutes('*');
+  }
+}

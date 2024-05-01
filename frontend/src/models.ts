@@ -86,12 +86,19 @@ export interface AuthUpdateDto {
 	oldPassword?: string;
 }
 
-import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType } from 'axios';
-import axios from 'axios';
+import type {
+	AxiosInstance,
+	AxiosRequestConfig,
+	AxiosResponse,
+	HeadersDefaults,
+	ResponseType,
+} from 'axios';
+import axiosInstance from './api/axios';
 
 export type QueryParamsType = Record<string | number, any>;
 
-export interface FullRequestParams extends Omit<AxiosRequestConfig, 'data' | 'params' | 'url' | 'responseType'> {
+export interface FullRequestParams
+	extends Omit<AxiosRequestConfig, 'data' | 'params' | 'url' | 'responseType'> {
 	/** set parameter to `true` for call `securityWorker` for this request */
 	secure?: boolean;
 	/** request path */
@@ -106,9 +113,13 @@ export interface FullRequestParams extends Omit<AxiosRequestConfig, 'data' | 'pa
 	body?: unknown;
 }
 
-export type RequestParams = Omit<FullRequestParams, 'body' | 'method' | 'query' | 'path'>;
+export type RequestParams = Omit<
+	FullRequestParams,
+	'body' | 'method' | 'query' | 'path'
+>;
 
-export interface ApiConfig<SecurityDataType = unknown> extends Omit<AxiosRequestConfig, 'data' | 'cancelToken'> {
+export interface ApiConfig<SecurityDataType = unknown>
+	extends Omit<AxiosRequestConfig, 'data' | 'cancelToken'> {
 	securityWorker?: (
 		securityData: SecurityDataType | null,
 	) => Promise<AxiosRequestConfig | void> | AxiosRequestConfig | void;
@@ -130,8 +141,13 @@ export class HttpClient<SecurityDataType = unknown> {
 	private secure?: boolean;
 	private format?: ResponseType;
 
-	constructor({ securityWorker, secure, format, ...axiosConfig }: ApiConfig<SecurityDataType> = {}) {
-		this.instance = axios.create({ ...axiosConfig, baseURL: axiosConfig.baseURL || '' });
+	constructor({
+		securityWorker,
+		secure,
+		format,
+		...axiosConfig
+	}: ApiConfig<SecurityDataType> = {}) {
+		this.instance = axiosInstance;
 		this.secure = secure;
 		this.format = format;
 		this.securityWorker = securityWorker;
@@ -141,7 +157,10 @@ export class HttpClient<SecurityDataType = unknown> {
 		this.securityData = data;
 	};
 
-	protected mergeRequestParams(params1: AxiosRequestConfig, params2?: AxiosRequestConfig): AxiosRequestConfig {
+	protected mergeRequestParams(
+		params1: AxiosRequestConfig,
+		params2?: AxiosRequestConfig,
+	): AxiosRequestConfig {
 		const method = params1.method || (params2 && params2.method);
 
 		return {
@@ -149,7 +168,11 @@ export class HttpClient<SecurityDataType = unknown> {
 			...params1,
 			...(params2 || {}),
 			headers: {
-				...((method && this.instance.defaults.headers[method.toLowerCase() as keyof HeadersDefaults]) || {}),
+				...((method &&
+					this.instance.defaults.headers[
+						method.toLowerCase() as keyof HeadersDefaults
+					]) ||
+					{}),
 				...(params1.headers || {}),
 				...((params2 && params2.headers) || {}),
 			},
@@ -167,11 +190,15 @@ export class HttpClient<SecurityDataType = unknown> {
 	protected createFormData(input: Record<string, unknown>): FormData {
 		return Object.keys(input || {}).reduce((formData, key) => {
 			const property = input[key];
-			const propertyContent: any[] = property instanceof Array ? property : [property];
+			const propertyContent: any[] =
+				property instanceof Array ? property : [property];
 
 			for (const formItem of propertyContent) {
 				const isFileType = formItem instanceof Blob || formItem instanceof File;
-				formData.append(key, isFileType ? formItem : this.stringifyFormItem(formItem));
+				formData.append(
+					key,
+					isFileType ? formItem : this.stringifyFormItem(formItem),
+				);
 			}
 
 			return formData;
@@ -195,11 +222,21 @@ export class HttpClient<SecurityDataType = unknown> {
 		const requestParams = this.mergeRequestParams(params, secureParams);
 		const responseFormat = format || this.format || undefined;
 
-		if (type === ContentType.FormData && body && body !== null && typeof body === 'object') {
+		if (
+			type === ContentType.FormData &&
+			body &&
+			body !== null &&
+			typeof body === 'object'
+		) {
 			body = this.createFormData(body as Record<string, unknown>);
 		}
 
-		if (type === ContentType.Text && body && body !== null && typeof body !== 'string') {
+		if (
+			type === ContentType.Text &&
+			body &&
+			body !== null &&
+			typeof body !== 'string'
+		) {
 			body = JSON.stringify(body);
 		}
 
@@ -207,7 +244,9 @@ export class HttpClient<SecurityDataType = unknown> {
 			...requestParams,
 			headers: {
 				...(requestParams.headers || {}),
-				...(type && type !== ContentType.FormData ? { 'Content-Type': type } : {}),
+				...(type && type !== ContentType.FormData
+					? { 'Content-Type': type }
+					: {}),
 			},
 			params: query,
 			responseType: responseFormat,
@@ -224,7 +263,9 @@ export class HttpClient<SecurityDataType = unknown> {
  *
  * The Stockwise API description
  */
-export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+export class Api<
+	SecurityDataType extends unknown,
+> extends HttpClient<SecurityDataType> {
 	/**
 	 * No description
 	 *
@@ -306,7 +347,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 		 * @request PATCH:/users/{id}
 		 * @secure
 		 */
-		usersControllerUpdate: (id: string, data: UpdateUserDto, params: RequestParams = {}) =>
+		usersControllerUpdate: (
+			id: string,
+			data: UpdateUserDto,
+			params: RequestParams = {},
+		) =>
 			this.request<void, any>({
 				path: `/users/${id}`,
 				method: 'PATCH',
@@ -365,7 +410,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 		 * @name AuthControllerLogin
 		 * @request POST:/auth/email/login
 		 */
-		authControllerLogin: (data: AuthEmailLoginDto, params: RequestParams = {}) =>
+		authControllerLogin: (
+			data: AuthEmailLoginDto,
+			params: RequestParams = {},
+		) =>
 			this.request<void, any>({
 				path: `/auth/email/login`,
 				method: 'POST',
@@ -381,7 +429,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 		 * @name AuthControllerRegister
 		 * @request POST:/auth/email/register
 		 */
-		authControllerRegister: (data: AuthRegisterLoginDto, params: RequestParams = {}) =>
+		authControllerRegister: (
+			data: AuthRegisterLoginDto,
+			params: RequestParams = {},
+		) =>
 			this.request<void, any>({
 				path: `/auth/email/register`,
 				method: 'POST',
@@ -397,7 +448,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 		 * @name AuthControllerConfirmEmail
 		 * @request POST:/auth/email/confirm
 		 */
-		authControllerConfirmEmail: (data: AuthConfirmEmailDto, params: RequestParams = {}) =>
+		authControllerConfirmEmail: (
+			data: AuthConfirmEmailDto,
+			params: RequestParams = {},
+		) =>
 			this.request<void, any>({
 				path: `/auth/email/confirm`,
 				method: 'POST',
@@ -413,7 +467,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 		 * @name AuthControllerForgotPassword
 		 * @request POST:/auth/forgot/password
 		 */
-		authControllerForgotPassword: (data: AuthForgotPasswordDto, params: RequestParams = {}) =>
+		authControllerForgotPassword: (
+			data: AuthForgotPasswordDto,
+			params: RequestParams = {},
+		) =>
 			this.request<void, any>({
 				path: `/auth/forgot/password`,
 				method: 'POST',
@@ -429,7 +486,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 		 * @name AuthControllerResetPassword
 		 * @request POST:/auth/reset/password
 		 */
-		authControllerResetPassword: (data: AuthResetPasswordDto, params: RequestParams = {}) =>
+		authControllerResetPassword: (
+			data: AuthResetPasswordDto,
+			params: RequestParams = {},
+		) =>
 			this.request<void, any>({
 				path: `/auth/reset/password`,
 				method: 'POST',

@@ -10,7 +10,8 @@
 		"preview": "vite preview",
 		"prepare": "cd .. && husky install frontend/.husky",
 		"test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js",
-		"generate-api": "swagger-typescript-api generate-templates --http-client axios -o ./src/api/templates/ && swagger-typescript-api -t ./src/api/templates/ -p http://localhost:8080/docs-json -o ./src -n models.ts"
+		"swaggerUrl": "node swagger.js",
+		"generate-api": "npx swagger-typescript-api generate-templates --http-client axios -o ./src/api/templates/ && npx swagger-typescript-api -t ./src/api/templates/ -p `npm run swaggerUrl --silent`  -o ./src -n models.ts && sed -i '' 's|import axios from '\\''axios'\\'';|import axios from \"./api/axios\";|g' ./src/models.ts"
 	},
 	"lint-staged": {
 		"*.{js,jsx,ts,tsx}": [

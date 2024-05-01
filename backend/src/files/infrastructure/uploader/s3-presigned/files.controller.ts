@@ -1,5 +1,5 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
-import { ApiCookieAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiCookieAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { FilesS3PresignedService } from './files.service';
 import { FileUploadDto } from './dto/file.dto';
@@ -12,6 +12,7 @@ import { FileUploadDto } from './dto/file.dto';
 export class FilesS3PresignedController {
   constructor(private readonly filesService: FilesS3PresignedService) {}
 
+  @ApiBearerAuth('jwt')
   @ApiCookieAuth()
   @UseGuards(AuthGuard('jwt'))
   @Post('upload')

@@ -6,7 +6,13 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiCookieAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCookieAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { FilesS3Service } from './files.service';
 
@@ -18,6 +24,7 @@ import { FilesS3Service } from './files.service';
 export class FilesS3Controller {
   constructor(private readonly filesService: FilesS3Service) {}
 
+  @ApiBearerAuth('jwt')
   @ApiCookieAuth()
   @UseGuards(AuthGuard('jwt'))
   @Post('upload')
