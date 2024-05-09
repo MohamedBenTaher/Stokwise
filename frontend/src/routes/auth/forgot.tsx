@@ -100,7 +100,7 @@ export const Route = createFileRoute('/auth/forgot')({
 												className="w-full"
 												disabled={isLoading}
 											>
-												Reset Password
+												Send Reset Email
 											</Button>
 										</div>
 									</form>

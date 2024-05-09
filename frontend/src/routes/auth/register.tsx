@@ -69,7 +69,7 @@ export const Route = createFileRoute('/auth/register')({
 								onSubmit={form.handleSubmit(onSubmit)}
 								className="space-y-8"
 							>
-								<div className="mx-auto grid w-[350px] gap-6">
+								<div className="mx-auto grid w-full gap-6">
 									<div className="grid gap-2 text-center">
 										<h1 className="text-3xl font-bold">Register</h1>
 										<p className="text-balance text-muted-foreground">
