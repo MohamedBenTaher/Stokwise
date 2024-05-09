@@ -1,6 +1,5 @@
+import React from 'react';
 import { Link, createFileRoute } from '@tanstack/react-router';
-import * as React from 'react';
-
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -179,7 +178,11 @@ export const Route = createFileRoute('/auth/register')({
 												)}
 											/>
 										</div>
-										<Button type="submit" className="w-full">
+										<Button
+											type="submit"
+											className="w-full"
+											disabled={isLoading}
+										>
 											Register
 										</Button>
 										<Button variant="outline" className="w-full">

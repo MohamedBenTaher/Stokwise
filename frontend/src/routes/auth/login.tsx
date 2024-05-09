@@ -1,73 +1,140 @@
 import { Link, createFileRoute } from '@tanstack/react-router';
 import * as React from 'react';
-
 import { cn } from '@/lib/utils';
-import { Icons } from '@/components/ui/icons';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { loginFormSchema } from '@/utils/validation/auth';
+import {
+	Form,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormControl,
+	FormDescription,
+	FormMessage,
+} from '@/components/ui/form';
+import { z } from 'zod';
+import api from '@/api';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 export const Route = createFileRoute('/auth/login')({
 	component: ({ className, ...props }: UserAuthFormProps) => {
+		const queryClient = useQueryClient();
 		const [isLoading, setIsLoading] = React.useState<boolean>(false);
-
-		async function onSubmit(event: React.SyntheticEvent) {
-			event.preventDefault();
+		const form = useForm<z.infer<typeof loginFormSchema>>({
+			resolver: zodResolver(loginFormSchema),
+			defaultValues: {
+				email: '',
+				password: '',
+			},
+		});
+		const loginUser = async (data: z.infer<typeof loginFormSchema>) => {
+			const response = await api.auth.authControllerLogin(data).then((res) => {
+				return res.data;
+			});
+			return response;
+		};
+		const loginMutation = useMutation({
+			mutationFn: loginUser,
+			onSuccess: () => {
+				queryClient.invalidateQueries({ queryKey: ['auth', 'me'] });
+			},
+		});
+		async function onSubmit() {
 			setIsLoading(true);
-
-			setTimeout(() => {
-				setIsLoading(false);
-			}, 3000);
+			await form.handleSubmit(async (data) => {
+				try {
+					await loginMutation.mutateAsync(data);
+				} catch (error) {
+					console.error(error);
+				}
+			})();
 		}
 
 		return (
 			<div className={cn('grid gap-6 h-screen', className)} {...props}>
 				<div className="w-full lg:grid lg:min-h-full lg:grid-cols-2 xl:min-h-full">
-					<div className="flex items-center justify-center py-12">
-						<div className="mx-auto grid w-[350px] gap-6">
-							<div className="grid gap-2 text-center">
-								<h1 className="text-3xl font-bold">Login</h1>
-								<p className="text-balance text-muted-foreground">
-									Enter your email below to login to your account
-								</p>
-							</div>
-							<div className="grid gap-4">
-								<div className="grid gap-2">
-									<Label htmlFor="email">Email</Label>
-									<Input
-										id="email"
-										type="email"
-										placeholder="m@example.com"
-										required
+					<Form {...form}>
+						<form
+							onSubmit={form.handleSubmit(onSubmit)}
+							className="flex items-center justify-center py-12"
+						>
+							<div className="mx-auto grid w-[350px] gap-6">
+								<div className="grid gap-2 text-center">
+									<h1 className="text-3xl font-bold">Login</h1>
+									<p className="text-balance text-muted-foreground">
+										Enter your email below to login to your account
+									</p>
+								</div>
+								<div className="grid gap-4">
+									<FormField
+										control={form.control}
+										name="email"
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel>Email</FormLabel>
+
+												<FormControl>
+													<Input
+														placeholder="m@example.com"
+														type="email"
+														{...field}
+													/>
+												</FormControl>
+												<FormDescription>
+													This will be used to login to your account
+												</FormDescription>
+												<FormMessage />
+											</FormItem>
+										)}
 									/>
+									<FormField
+										control={form.control}
+										name="password"
+										render={({ field }) => (
+											<FormItem>
+												<div className="flex justify-between items-center">
+													<FormLabel>Password</FormLabel>
+													<Link
+														to="/auth/forgot"
+														className="ml-auto inline-block text-sm underline"
+													>
+														Forgot your password?
+													</Link>
+												</div>
+												<FormControl>
+													<Input
+														placeholder="password"
+														type="password"
+														{...field}
+													/>
+												</FormControl>
+												<FormDescription>
+													This will be used to login to your account
+												</FormDescription>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+									<Button type="submit" className="w-full" disabled={isLoading}>
+										Login
+									</Button>
+									<Button variant="outline" className="w-full">
+										Login with Google
+									</Button>
 								</div>
-								<div className="grid gap-2">
-									<div className="flex items-center">
-										<Label htmlFor="password">Password</Label>
-										<Link
-											href="/forgot-password"
-											className="ml-auto inline-block text-sm underline"
-										>
-											Forgot your password?
-										</Link>
-									</div>
-									<Input id="password" type="password" required />
+								<div className="mt-4 text-center text-sm">
+									Don&apos;t have an account?{' '}
+									<Link to="/auth/register" className="underline">
+										Sign up
+									</Link>
 								</div>
-								<Button type="submit" className="w-full">
-									Login
-								</Button>
-								<Button variant="outline" className="w-full">
-									Login with Google
-								</Button>
 							</div>
-							<div className="mt-4 text-center text-sm">
-								Don&apos;t have an account?{' '}
-								<Link to="/auth/register" className="underline">
-									Sign up
-								</Link>
-							</div>
-						</div>
-					</div>
+						</form>
+					</Form>
 					<div className="hidden bg-muted lg:block">
 						<img
 							src="../../src/assets/media/placeholder.svg"
