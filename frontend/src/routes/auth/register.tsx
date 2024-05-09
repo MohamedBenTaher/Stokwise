@@ -44,7 +44,7 @@ export const Route = createFileRoute('/auth/register')({
 		};
 		const createMutation = useMutation({
 			mutationFn: registerUser,
-			onSuccess: (data) => {
+			onSuccess: () => {
 				queryClient.invalidateQueries({ queryKey: ['auth', 'me'] });
 			},
 		});
