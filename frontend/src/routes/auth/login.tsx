@@ -1,4 +1,4 @@
-import { Link, createFileRoute } from '@tanstack/react-router';
+import { Link, createFileRoute, useNavigate } from '@tanstack/react-router';
 import * as React from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -22,6 +22,7 @@ interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 export const Route = createFileRoute('/auth/login')({
 	component: ({ className, ...props }: UserAuthFormProps) => {
 		const queryClient = useQueryClient();
+		const navigate = useNavigate();
 		const [isLoading, setIsLoading] = React.useState<boolean>(false);
 		const form = useForm<z.infer<typeof loginFormSchema>>({
 			resolver: zodResolver(loginFormSchema),
@@ -40,6 +41,7 @@ export const Route = createFileRoute('/auth/login')({
 			mutationFn: loginUser,
 			onSuccess: () => {
 				queryClient.invalidateQueries({ queryKey: ['auth', 'me'] });
+				navigate({ to: '/' });
 			},
 		});
 		async function onSubmit() {
