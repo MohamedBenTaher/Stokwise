@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   maildev:
@@ -16,7 +16,7 @@ services:
 
   backend:
     container_name: stockwise-backend
-    build: 
+    build:
       context: ./backend
       dockerfile: Dockerfile
       target: development
@@ -26,13 +26,13 @@ services:
       - ./backend:/usr/src/app
     depends_on:
       - db
-      - maildev  
+      - maildev
     env_file:
       - ./backend/.env
     networks:
-      - stockwise-network 
+      - stockwise-network
     restart: unless-stopped
-    
+
   db:
     container_name: stockwise-db
     image: postgres:14
