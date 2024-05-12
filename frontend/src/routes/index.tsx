@@ -1,6 +1,7 @@
+import Navbar from '@/components/ui/navbar';
 import { createFileRoute, redirect } from '@tanstack/react-router';
 
-export const Route = createFileRoute('/dashboard/')({
+export const Route = createFileRoute('/')({
 	beforeLoad: ({ context }) => {
 		if (!context.authentication.isAuthenticated) {
 			throw redirect({
@@ -11,5 +12,10 @@ export const Route = createFileRoute('/dashboard/')({
 			});
 		}
 	},
-	component: () => <div>Hello /dashboard/!</div>,
+	component: () => (
+		<>
+			<Navbar />
+			<div>Hello /! world</div>
+		</>
+	),
 });

@@ -1,27 +1,20 @@
-import * as React from 'react'
-import {
-  Link,
-  Outlet,
-  createRootRouteWithContext,
-} from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/router-devtools'
-import { QueryClient } from '@tanstack/react-query'
-import Navbar from '@/components/ui/navbar'
+import { Outlet, createRootRouteWithContext } from '@tanstack/react-router';
+import { TanStackRouterDevtools } from '@tanstack/router-devtools';
+import { QueryClient } from '@tanstack/react-query';
 
 export const Route = createRootRouteWithContext<{
-  queryClient: QueryClient,
-  auth: any
+	queryClient: QueryClient;
+	authentication: Record<string, boolean>;
 }>()({
-  component: RootComponent,
-})
+	component: RootComponent,
+});
 
 function RootComponent() {
-  return (
-    <>
- 
-      <hr />
-      <Outlet />
-      <TanStackRouterDevtools position="bottom-left" />
-    </>
-  )
+	return (
+		<>
+			<hr />
+			<Outlet />
+			<TanStackRouterDevtools position="bottom-left" />
+		</>
+	);
 }

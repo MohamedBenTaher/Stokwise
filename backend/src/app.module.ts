@@ -10,7 +10,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from 'src/database/typorm-config.service';
-
 import databseConfig from 'src/database/config/databse.config';
 import appConfig from './config/app.config';
 import mailConfig from './mail/config/mail.config';
