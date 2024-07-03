@@ -21,7 +21,10 @@ import { AuthResetPasswordDto } from './dto/auth-reset-password.dto';
 import { AuthUpdateDto } from './dto/auth-update.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthRegisterLoginDto } from './dto/auth-register-login.dto';
-import { LoginResponseType } from './types/login-response.type';
+import {
+  LoginResponseType,
+  refreshTokenResponseType,
+} from './types/login-response.type';
 import { NullableType } from '../utils/types/nullable.type';
 import { User } from '../users/domain/user';
 import { Res } from '@nestjs/common';
@@ -52,9 +55,11 @@ export class AuthController {
     });
     res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true });
 
-    res.send({ user }); // Wrap the user object in an object
-
-    return { user }; // Return the user object wrapped in an object
+    res.send({ user, tokens }); // Wrap the user object in an object
+    return {
+      user,
+      tokens,
+    };
   }
 
   @Post('email/register')
@@ -101,7 +106,6 @@ export class AuthController {
   public me(@Request() request): Promise<NullableType<User>> {
     return this.service.me(request.user);
   }
-
   @ApiBearerAuth('jwt')
   @ApiCookieAuth()
   @SerializeOptions({
@@ -113,7 +117,7 @@ export class AuthController {
   public async refresh(
     @Request() req,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<Omit<LoginResponseType, 'user'>> {
+  ): Promise<Omit<refreshTokenResponseType, 'user'>> {
     const { tokens } = await this.service.refreshToken(req.user);
 
     res.cookie('token', tokens.token, {
@@ -122,9 +126,8 @@ export class AuthController {
     });
     res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true });
 
-    return tokens;
+    return { tokens }; // Wrap tokens in an object
   }
-
   @ApiBearerAuth('jwt')
   @ApiCookieAuth()
   @Post('logout')
