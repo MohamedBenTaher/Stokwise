@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/form';
 import api from '@/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { NavLink } from 'react-router-dom';
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 const Register = ({ className, ...props }: UserAuthFormProps) => {
@@ -180,9 +181,9 @@ const Register = ({ className, ...props }: UserAuthFormProps) => {
 								</div>
 								<div className="mt-4 text-center text-sm">
 									Don&apos;t have an account?{' '}
-									<Link to="/auth/login" className="underline">
+									<NavLink to="/auth/login" className=" underline">
 										Sign up
-									</Link>
+									</NavLink>
 								</div>
 							</div>
 						</form>

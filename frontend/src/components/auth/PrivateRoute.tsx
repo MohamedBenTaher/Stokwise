@@ -11,7 +11,7 @@ const PrivateRoute = ({ children }: PrivateRouteProps) => {
 	const { isLoggedIn } = useContext(GlobalStateContext);
 	console.log(isLoggedIn);
 
-	return isLoggedIn ? <>{children}</> : <Navigate to="/login" replace />;
+	return isLoggedIn ? <>{children}</> : <Navigate to="/auth/login" replace />;
 };
 
 export default PrivateRoute;

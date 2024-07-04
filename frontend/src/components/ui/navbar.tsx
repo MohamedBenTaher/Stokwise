@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { CircleUser, Menu, Package2, Search } from 'lucide-react';
 import { Button } from './button';
@@ -13,8 +13,14 @@ import {
 	DropdownMenuTrigger,
 } from './dropdown-menu';
 import { Input } from './input';
+import GlobalStateContext from '@/context/globalStateContext';
 
 function Navbar() {
+	const globalState = useContext(GlobalStateContext);
+	const handleLogout = () => {
+		globalState.setIsLoggedIn(false);
+		globalState.setAccessToken('');
+	};
 	return (
 		<>
 			<header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
@@ -50,7 +56,6 @@ function Navbar() {
 					>
 						Orders
 					</NavLink>
-					{/* Repeat for other links */}
 					<ModeToggle />
 				</nav>
 				<Sheet>
@@ -66,7 +71,6 @@ function Navbar() {
 					</SheetTrigger>
 					<SheetContent side="left">
 						<nav className="grid gap-6 text-lg font-medium">
-							{/* Repeat NavLink usage here for mobile navigation */}
 							<ModeToggle />
 						</nav>
 					</SheetContent>
@@ -95,7 +99,7 @@ function Navbar() {
 							<DropdownMenuItem>Settings</DropdownMenuItem>
 							<DropdownMenuItem>Support</DropdownMenuItem>
 							<DropdownMenuSeparator />
-							<DropdownMenuItem>Logout</DropdownMenuItem>
+							<DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
 						</DropdownMenuContent>
 					</DropdownMenu>
 				</div>

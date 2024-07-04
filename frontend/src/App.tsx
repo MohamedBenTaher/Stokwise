@@ -11,6 +11,10 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import ErrorBoundary from './ErrorBoundary';
 import { ThemeProvider } from './components/theme/ThemeProvider';
 import Navbar from './components/ui/navbar';
+import Register from './pages/auth/register';
+import ForgotLogin from './pages/auth/forgot';
+import Reset from './pages/auth/reset';
+import Confirm from './pages/auth/confirm';
 
 // Modify the router in App.tsx
 function App() {
@@ -18,12 +22,34 @@ function App() {
 
 	const router = createBrowserRouter([
 		{
-			path: '/login',
-			element: <LoginPage />,
+			path: '/auth',
+			children: [
+				{
+					path: '/auth/login',
+					element: <LoginPage />,
+				},
+				{
+					path: '/auth/register',
+					element: <Register />,
+				},
+				{
+					path: '/auth/forgot',
+					element: <ForgotLogin />,
+				},
+				{
+					path: '/auth/reset',
+					element: <Reset />,
+				},
+				{
+					path: '/auth/confirm/email',
+					element: <Confirm />,
+				},
+			],
 		},
+
 		{
 			path: '/',
-			element: <Navbar />, // Assuming Navbar correctly renders an Outlet for its children
+			element: <Navbar />,
 			children: [
 				{
 					element: (
@@ -36,7 +62,6 @@ function App() {
 							index: true,
 							element: <Dashboard />,
 						},
-						// Add more nested routes here if necessary
 					],
 				},
 			],
