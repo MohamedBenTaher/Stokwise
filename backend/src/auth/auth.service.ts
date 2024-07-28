@@ -21,6 +21,7 @@ import { MailService } from '../mail/mail.service';
 import { RoleEnum } from '../roles/roles.enum';
 import { StatusEnum } from '../status/status.enum';
 import { User } from '../users/domain/user';
+import { AuthConfirmPasswordResponseDto } from './dto/auth-confriim-email-response.dto';
 
 @Injectable()
 export class AuthService {
@@ -215,7 +216,7 @@ export class AuthService {
     });
   }
 
-  async confirmEmail(hash: string): Promise<void> {
+  async confirmEmail(hash: string): Promise<AuthConfirmPasswordResponseDto> {
     let userId: User['id'];
 
     try {
@@ -253,6 +254,15 @@ export class AuthService {
     };
 
     this.usersService.update(user.id, user);
+    const { token, refreshToken, tokenExpires } = await this.getTokensData({
+      id: user.id,
+      role: user.role,
+    });
+    return {
+      token,
+      refreshToken,
+      tokenExpires,
+    };
   }
 
   async forgotPassword(email: string): Promise<void> {

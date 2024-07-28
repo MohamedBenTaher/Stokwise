@@ -48,12 +48,8 @@ export default function Login({ className, ...props }: UserAuthFormProps) {
 		mutationFn: loginUser,
 		// Inside the onSuccess callback of loginMutation
 		onSuccess: (response) => {
-			console.log('Login successful, response:', response); // Add this to debug
 			if (response.tokens && response.tokens.token) {
-				console.log('Setting access token:', response.tokens.token);
 				setIsLoggedIn(true);
-				console.log('setIsLoggedIn(true)'); // Add this to debug
-				console.log('after seeting to true', isLoggedIn); // Add this to debug
 				setAccessToken(response.tokens.token);
 				queryClient.invalidateQueries({ queryKey: ['auth', 'me'] });
 				navigate('/');

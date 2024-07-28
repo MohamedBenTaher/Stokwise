@@ -23,9 +23,9 @@ function Confirm() {
 		onError: (error) => {
 			console.error('Confirm email error:', error);
 		},
-		onSuccess: () => {
+		onSuccess: (response) => {
 			globalState.setIsLoggedIn(true);
-			navigate('/');
+			globalState.setAccessToken(response.tokens.token);
 		},
 	});
 
@@ -45,8 +45,9 @@ function Confirm() {
 				<Button
 					type="submit"
 					className="w-full"
-					onClick={() => {}}
-					disabled={isLoading || !isSuccess}
+					onClick={() => {
+						navigate('/');
+					}}
 				>
 					Home
 				</Button>
