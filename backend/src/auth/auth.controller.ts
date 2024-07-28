@@ -29,6 +29,7 @@ import { NullableType } from '../utils/types/nullable.type';
 import { User } from '../users/domain/user';
 import { Res } from '@nestjs/common';
 import { Response, Request as ReqExpress } from 'express';
+import { AuthConfirmPasswordResponseDto } from './dto/auth-confriim-email-response.dto';
 
 @ApiTags('Auth')
 @Controller({
@@ -55,7 +56,7 @@ export class AuthController {
     });
     res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true });
 
-    res.send({ user, tokens }); // Wrap the user object in an object
+    res.send({ user, tokens });
     return {
       user,
       tokens,
@@ -72,7 +73,7 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async confirmEmail(
     @Body() confirmEmailDto: AuthConfirmEmailDto,
-  ): Promise<void> {
+  ): Promise<AuthConfirmPasswordResponseDto> {
     return this.service.confirmEmail(confirmEmailDto.hash);
   }
 
