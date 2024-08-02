@@ -6,15 +6,15 @@ import Dashboard from './pages/dashboard';
 import PrivateRoute from './components/auth/PrivateRoute';
 import GlobalStateContext from './context/globalStateContext';
 import useGlobalState from './hooks/useGlobalState';
-import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import ErrorBoundary from './ErrorBoundary';
 import { ThemeProvider } from './components/theme/ThemeProvider';
-import Navbar from './components/ui/navbar';
 import Register from './pages/auth/register';
 import ForgotLogin from './pages/auth/forgot';
 import Reset from './pages/auth/reset';
 import Confirm from './pages/auth/confirm';
+import Profile from './pages/profile';
+import Shell from './components/ui/shell';
 
 // Modify the router in App.tsx
 function App() {
@@ -49,7 +49,7 @@ function App() {
 
 		{
 			path: '/',
-			element: <Navbar />,
+			element: <Shell />,
 			children: [
 				{
 					element: (
@@ -61,6 +61,10 @@ function App() {
 						{
 							index: true,
 							element: <Dashboard />,
+						},
+						{
+							path: 'profile',
+							element: <Profile />,
 						},
 					],
 				},

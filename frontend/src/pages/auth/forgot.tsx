@@ -2,7 +2,7 @@ import React from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { forgotPasswordFormSchema } from '@/utils/validation/auth';
+import { forgotPasswordFormSchema } from '@/lib/utils/validation/auth';
 import { z } from 'zod';
 import {
 	Form,

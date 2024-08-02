@@ -29,7 +29,6 @@ import { NullableType } from '../utils/types/nullable.type';
 import { User } from '../users/domain/user';
 import { Res } from '@nestjs/common';
 import { Response, Request as ReqExpress } from 'express';
-import { AuthConfirmPasswordResponseDto } from './dto/auth-confriim-email-response.dto';
 
 @ApiTags('Auth')
 @Controller({
@@ -73,8 +72,16 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async confirmEmail(
     @Body() confirmEmailDto: AuthConfirmEmailDto,
-  ): Promise<AuthConfirmPasswordResponseDto> {
-    return this.service.confirmEmail(confirmEmailDto.hash);
+    @Res() res: Response,
+  ): Promise<LoginResponseType> {
+    const { user, tokens } = await this.service.confirmEmail(
+      confirmEmailDto.hash,
+    );
+    res.send({ user, tokens });
+    return {
+      user,
+      tokens,
+    };
   }
 
   @Post('forgot/password')

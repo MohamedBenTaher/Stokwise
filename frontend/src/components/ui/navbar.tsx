@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { CircleUser, Menu, Package2, Search } from 'lucide-react';
 import { Button } from './button';
 import { SheetContent, SheetTrigger, Sheet } from './sheet';
@@ -17,13 +17,19 @@ import GlobalStateContext from '@/context/globalStateContext';
 
 function Navbar() {
 	const globalState = useContext(GlobalStateContext);
+	const navigate = useNavigate();
 	const handleLogout = () => {
 		globalState.setIsLoggedIn(false);
 		globalState.setAccessToken('');
 	};
+	const handleSettingsNavigation = () => {
+		console.log('Settings');
+		navigate('/profile');
+	};
+
 	return (
 		<>
-			<header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
+			<header className=" top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
 				<nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
 					<NavLink
 						to="/"
@@ -96,7 +102,9 @@ function Navbar() {
 						<DropdownMenuContent align="end">
 							<DropdownMenuLabel>My Account</DropdownMenuLabel>
 							<DropdownMenuSeparator />
-							<DropdownMenuItem>Settings</DropdownMenuItem>
+							<DropdownMenuItem onClick={handleSettingsNavigation}>
+								Settings
+							</DropdownMenuItem>
 							<DropdownMenuItem>Support</DropdownMenuItem>
 							<DropdownMenuSeparator />
 							<DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>

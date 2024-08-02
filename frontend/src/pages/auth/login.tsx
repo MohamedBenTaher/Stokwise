@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { loginFormSchema } from '@/utils/validation/auth';
+import { loginFormSchema } from '@/lib/utils/validation/auth';
 import { NavLink, useNavigate } from 'react-router-dom';
 import {
 	Form,
@@ -23,7 +23,7 @@ interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 export default function Login({ className, ...props }: UserAuthFormProps) {
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
-	const { setIsLoggedIn, setAccessToken, isLoggedIn, accessToken } =
+	const { setIsLoggedIn, setAccessToken } =
 		React.useContext(GlobalStateContext);
 	const [isLoading, setIsLoading] = React.useState<boolean>(false);
 	const form = useForm<z.infer<typeof loginFormSchema>>({
@@ -35,7 +35,7 @@ export default function Login({ className, ...props }: UserAuthFormProps) {
 	});
 	const loginUser = async (
 		data: z.infer<typeof loginFormSchema>,
-	): Promise<any> => {
+	): Promise<void> => {
 		try {
 			const response = await api.auth.authControllerLogin(data);
 			return response.data;
