@@ -1,4 +1,4 @@
-export const routes = {
+export const routes: { [key: string]: string } = {
 	home: '/',
 	search: '/search',
 	portfolio: '/portfolio',

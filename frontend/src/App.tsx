@@ -2,7 +2,7 @@ import React from 'react';
 import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
 import './App.css';
 import LoginPage from './pages/auth/login';
-import Dashboard from './pages/dashboard';
+import Home from './pages/home';
 import PrivateRoute from './components/auth/PrivateRoute';
 import GlobalStateContext from './context/globalStateContext';
 import useGlobalState from './hooks/useGlobalState';
@@ -15,6 +15,7 @@ import Reset from './pages/auth/reset';
 import Confirm from './pages/auth/confirm';
 import Profile from './pages/profile';
 import Shell from './components/ui/shell';
+import NotFound from './components/ui/notfound';
 
 // Modify the router in App.tsx
 function App() {
@@ -60,7 +61,7 @@ function App() {
 					children: [
 						{
 							index: true,
-							element: <Dashboard />,
+							element: <Home />,
 						},
 						{
 							path: 'profile',
@@ -69,6 +70,10 @@ function App() {
 					],
 				},
 			],
+		},
+		{
+			path: '*', // Catch-all route for non-existent routes
+			element: <NotFound />,
 		},
 	]);
 

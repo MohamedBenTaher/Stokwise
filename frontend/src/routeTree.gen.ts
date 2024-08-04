@@ -11,7 +11,7 @@
 // Import Routes
 
 import { Route as rootRoute } from './pages/__root';
-import { Route as DashboardIndexImport } from './pages/dashboard/index';
+import { Route as DashboardIndexImport } from './pages/home/index';
 import { Route as AuthResetImport } from './pages/auth/reset';
 import { Route as AuthRegisterImport } from './pages/auth/register';
 import { Route as AuthLoginImport } from './pages/auth/login';

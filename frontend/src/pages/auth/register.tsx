@@ -1,9 +1,9 @@
 import React from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useForm } from 'react-hook-form';
-import { registerFormSchema } from '@/utils/validation/auth';
+import { registerFormSchema } from '@/lib/utils/validation/auth';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {

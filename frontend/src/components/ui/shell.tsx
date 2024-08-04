@@ -5,21 +5,23 @@ import Navbar from './navbar';
 
 const Shell: React.FC = () => {
 	return (
-		<div className="shell">
-			<header>
-				{/* <h1>My Application</h1> */}
-				{/* Add more header content here */}
-				{/* <Navbar /> */}
-			</header>
-			<aside>
+		<div className="flex h-screen">
+			<aside className="">
 				<Sidebar />
 			</aside>
-			<main>
-				<Outlet />
-			</main>
-			{/* <footer>
-				<p>&copy; 2023 My Application</p>
-			</footer> */}
+			<div className="flex flex-col flex-1">
+				<header className="bg-gray-800 text-white p-4">
+					{/* <h1>My Application</h1> */}
+					{/* Add more header content here */}
+					{/* <Navbar /> */}
+				</header>
+				<main className="flex-1 p-4">
+					<Outlet />
+				</main>
+			</div>
+			{/* <footer className="bg-gray-800 text-white p-4">
+                <p>&copy; 2023 My Application</p>
+            </footer> */}
 		</div>
 	);
 };
