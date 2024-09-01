@@ -27,6 +27,9 @@ export class AuthMiddleware implements NestMiddleware {
       // Verify the access token
       const decoded = jwt.verify(accessToken, secret) as JwtPayload;
       req['user'] = decoded.user;
+
+      // Set the access token in the request headers for outgoing API calls
+      req.headers['Authorization'] = `Bearer ${accessToken}`;
     } catch (err) {
       // If the access token is expired, try to refresh it
       if (err.name === 'TokenExpiredError') {
@@ -48,6 +51,9 @@ export class AuthMiddleware implements NestMiddleware {
             { expiresIn: '15m' },
           );
           res.cookie('access-token', newAccessToken, { httpOnly: true });
+
+          // Set the new access token in the request headers for outgoing API calls
+          req.headers['Authorization'] = `Bearer ${newAccessToken}`;
           res.json({ accessToken: newAccessToken }); // Return the new access token
         } catch (err) {
           // If the refresh token is also invalid, clear the cookies
@@ -56,6 +62,9 @@ export class AuthMiddleware implements NestMiddleware {
           res.status(401).json({ error: 'Invalid refresh token' }); // Return an error response
           return;
         }
+      } else {
+        res.status(401).json({ error: 'Invalid access token' });
+        return;
       }
     }
 

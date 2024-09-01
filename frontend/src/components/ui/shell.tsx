@@ -2,6 +2,7 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { Sidebar } from './sidebar';
 import Navbar from './navbar';
+import HeaderSection from './header-section';
 
 const Shell: React.FC = () => {
 	return (
@@ -10,11 +11,7 @@ const Shell: React.FC = () => {
 				<Sidebar />
 			</aside>
 			<div className="flex flex-col flex-1">
-				<header className="bg-gray-800 text-white p-4">
-					{/* <h1>My Application</h1> */}
-					{/* Add more header content here */}
-					{/* <Navbar /> */}
-				</header>
+				<HeaderSection />
 				<main className="flex-1 p-4">
 					<Outlet />
 				</main>

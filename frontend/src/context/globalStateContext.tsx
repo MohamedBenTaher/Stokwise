@@ -1,10 +1,18 @@
 import { createContext } from 'react';
 
+interface User {
+	id: string;
+	firstName: string;
+	lastName: string;
+	email: string;
+}
 interface GlobalState {
 	accessToken: string | undefined;
 	setAccessToken: React.Dispatch<React.SetStateAction<string | undefined>>;
 	isLoggedIn: boolean;
 	setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
+	user: User;
+	setUser: React.Dispatch<React.SetStateAction<User>>;
 	// Add other properties as needed
 }
 
@@ -14,7 +22,13 @@ const defaultGlobalState: GlobalState = {
 	setAccessToken: () => {},
 	isLoggedIn: false,
 	setIsLoggedIn: () => {},
-	// Initialize other properties as needed
+	user: {
+		id: '',
+		firstName: '',
+		lastName: '',
+		email: '',
+	},
+	setUser: () => {},
 };
 
 const GlobalStateContext = createContext<GlobalState>(defaultGlobalState);

@@ -23,7 +23,7 @@ interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 export default function Login({ className, ...props }: UserAuthFormProps) {
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
-	const { setIsLoggedIn, setAccessToken } =
+	const { setIsLoggedIn, setAccessToken, setUser } =
 		React.useContext(GlobalStateContext);
 	const [isLoading, setIsLoading] = React.useState<boolean>(false);
 	const form = useForm<z.infer<typeof loginFormSchema>>({
@@ -51,6 +51,7 @@ export default function Login({ className, ...props }: UserAuthFormProps) {
 			if (response.tokens && response.tokens.token) {
 				setIsLoggedIn(true);
 				setAccessToken(response.tokens.token);
+				setUser(response.user);
 				queryClient.invalidateQueries({ queryKey: ['auth', 'me'] });
 				navigate('/');
 			} else {

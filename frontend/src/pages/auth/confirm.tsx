@@ -27,6 +27,7 @@ function Confirm() {
 		onSuccess: (response: { tokens?: { token?: string } }) => {
 			console.log('Confirm email response:', response);
 			globalState.setIsLoggedIn(true);
+			globalState.setUser(response?.user);
 			if (response?.tokens?.token) {
 				globalState.setAccessToken(response?.tokens.token);
 			}

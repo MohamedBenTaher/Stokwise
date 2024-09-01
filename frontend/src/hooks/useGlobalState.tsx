@@ -3,7 +3,12 @@ import { useState } from 'react';
 export default function useGlobalState() {
 	const [accessToken, setAccessToken] = useState();
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+	const [user, setUser] = useState({
+		id: '',
+		firstName: '',
+		lastName: '',
+		email: '',
+	});
 	const [isLoginReady, setIsLoginReady] = useState(true);
 	const [isSignupReady, setIsSignupReady] = useState(true);
 	const [isNavReady, setIsNavReady] = useState(true);
@@ -34,5 +39,7 @@ export default function useGlobalState() {
 		setIsNavReady,
 		isAccountReady,
 		setIsAccountReady,
+		user,
+		setUser,
 	};
 }
