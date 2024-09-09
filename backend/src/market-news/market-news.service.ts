@@ -35,6 +35,7 @@ export class MarketNewsService {
     const params = {
       countries: 'us',
       limit: 3,
+      language: 'en',
       api_token: this.apiKey,
     };
     const url = `${this.apiUrl}?countries=${params.countries}&limit=${params.limit}&api_token=${params.api_token}`;
@@ -56,7 +57,7 @@ export class MarketNewsService {
     }
   }
 
-  @Cron('0 0 0 * * *')
+  @Cron('0 0 * * * *')
   async updateDailyMarketNews() {
     this.logger.log('Updating daily market news...');
     try {
@@ -69,9 +70,16 @@ export class MarketNewsService {
   }
 
   // Get the cached news
-  getDailyMarketNews(): any {
+  async getDailyMarketNews(): Promise<any> {
     if (!this.cachedNews) {
-      throw new HttpException('No news available', 503);
+      this.logger.log('No cached news available, fetching new data...');
+      try {
+        const response = await this.fetchMarketNews();
+        this.cachedNews = this.mapData(response.data);
+      } catch (error) {
+        this.logger.error('Failed to fetch market news.', error.message);
+        throw new HttpException('Failed to fetch market news', 500);
+      }
     }
     return this.cachedNews;
   }

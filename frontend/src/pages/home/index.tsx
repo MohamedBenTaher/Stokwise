@@ -1,9 +1,8 @@
-import api from '@/api';
-import GeneralInsights from '@/components/ui/general-insights';
-import { Icons } from '@/components/ui/icons';
-import { Sidebar } from '@/components/ui/sidebar';
-import { useQuery } from '@tanstack/react-query';
 import React from 'react';
+import api from '@/api';
+import { useQuery } from '@tanstack/react-query';
+import SectorPerformance from '@/components/ui/home/sector-performance';
+import GeneralInsights from '@/components/ui/home/general-insights';
 
 function Home() {
 	const {
@@ -23,11 +22,13 @@ function Home() {
 	if (isError) {
 		return <div>Error fetching market news</div>;
 	}
-	const marketNewsData = marketNews?.data.ar
+	const marketNewsData = marketNews?.data?.marketNewsByIndustry;
+	const isBullish = marketNewsData?.data?.overallAverageSentiment > 0.5;
 	return (
 		<div className="w-full h-full">
-			<div className="flex w-full h-1/2 flex-row items-center  justify-start">
-				<GeneralInsights isBullish={true} />
+			<div className="flex w-full h-1/2 flex-row items-center justify-start gap-x-12">
+				<GeneralInsights isBullish={isBullish} news={marketNewsData} />
+				<SectorPerformance />
 			</div>
 		</div>
 	);

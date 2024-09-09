@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   maildev:
     container_name: stockwise-maildev
@@ -48,8 +46,22 @@ services:
     networks:
       - stockwise-network
 
+  cache:
+    container_name: stockwise-cache
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    networks:
+      - stockwise-network
+    volumes:
+      - cache:/data
+    env_file:
+      - ./backend/.env
+
 networks:
   stockwise-network:
 
 volumes:
   db:
+  cache:

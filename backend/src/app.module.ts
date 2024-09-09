@@ -9,6 +9,7 @@ import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { CacheModule, CacheStoreFactory } from '@nestjs/cache-manager';
 import { TypeOrmConfigService } from 'src/database/typorm-config.service';
 import databseConfig from 'src/database/config/databse.config';
 import appConfig from './config/app.config';
@@ -30,6 +31,9 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { MarketNewsController } from './market-news/market-news.controller';
 import { MarketNewsModule } from './market-news/market-news.module';
 import { HttpModule } from '@nestjs/axios';
+import { StocksModule } from './stocks/stocks.module';
+import * as redisStore from 'cache-manager-redis-store';
+import redisConfig from './redis/config/redis.config';
 
 config({ path: resolve(__dirname, '.env') });
 
@@ -44,8 +48,25 @@ config({ path: resolve(__dirname, '.env') });
         fileConfig,
         authConfig,
         MarketNewsconfig,
+        redisConfig,
       ],
       envFilePath: ['.env'],
+    }),
+    CacheModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService<AllConfigType>) => ({
+        store: redisStore as unknown as CacheStoreFactory,
+        host: configService.getOrThrow<string>(
+          'redis.host' as keyof AllConfigType,
+          'localhost',
+        ), // Default to 'localhost' if not set
+        port: configService.getOrThrow<number>(
+          'redis.port' as keyof AllConfigType,
+          6379,
+        ), // Default to 6379 if not set
+        ttl: 600, // cache expiration in seconds
+      }),
     }),
     UsersModule,
     TypeOrmModule.forRootAsync({
@@ -77,13 +98,14 @@ config({ path: resolve(__dirname, '.env') });
       imports: [ConfigModule],
       inject: [ConfigService],
     }),
-    ScheduleModule.forRoot(),
     MailerModule,
     MailModule,
     AuthModule,
     FilesModule,
+    ScheduleModule.forRoot(),
     MarketNewsModule,
     HttpModule,
+    StocksModule,
   ],
   controllers: [AppController, MarketNewsController],
   providers: [AppService, MarketNewsService],
